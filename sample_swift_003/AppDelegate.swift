@@ -18,7 +18,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		// Insert code here to initialize your application
 		masterViewController = MasterViewController(nibName: "MasterViewController", bundle: nil)
 		
-		masterViewController.setupSampleBugs()
+        if let data = NSUserDefaults.standardUserDefaults().objectForKey("bugs") as? NSData {
+            masterViewController.bugs = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! [ScaryBugDoc]
+        }else{
+     		masterViewController.setupSampleBugs()
+        }
 		window.contentView!.addSubview(masterViewController.view)
 		masterViewController.view.frame = (window.contentView as NSView!).bounds
 		
@@ -37,6 +41,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 	func applicationWillTerminate(aNotification: NSNotification) {
 		// Insert code here to tear down your application
+        masterViewController.saveBugs()
 	}
 
 

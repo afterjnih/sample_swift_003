@@ -14,7 +14,9 @@ class MasterViewController: NSViewController {
 	@IBOutlet weak var bugTitleView: NSTextField!
 	@IBOutlet weak var bugImageView: NSImageView!
 	@IBOutlet weak var bugRating: EDStarRating!
-	
+    @IBOutlet weak var deleteButton: NSButton!
+    @IBOutlet weak var changePictureButton: NSButton!
+    
 	var bugs = [ScaryBugDoc]()
 	
   override func viewDidLoad() {
@@ -33,7 +35,7 @@ class MasterViewController: NSViewController {
 		
     self.bugRating.maxRating = 5
     self.bugRating.horizontalMargin = 12
-    self.bugRating.editable = true
+    self.bugRating.editable = false
     self.bugRating.displayMode = UInt(EDStarRatingDisplayFull)
 		
     self.bugRating.rating = Float(0.0)
@@ -61,6 +63,13 @@ class MasterViewController: NSViewController {
 	}
 	
 	func updateDetailInfo(doc: ScaryBugDoc?) {
+        let selectedDoc = selectedBugDoc()
+        let buttonsEnabled = (selectedDoc != nil)
+        deleteButton.enabled = buttonsEnabled
+        changePictureButton.enabled = buttonsEnabled
+        bugRating.editable = buttonsEnabled
+        bugTitleView.enabled = buttonsEnabled
+        
 		var title = ""
 		var image: NSImage?
 		var rating = 0.0
@@ -94,6 +103,12 @@ class MasterViewController: NSViewController {
 			}
 		}
 	}
+    
+    func saveBugs() {
+        let data = NSKeyedArchiver.archivedDataWithRootObject(self.bugs)
+        NSUserDefaults.standardUserDefaults().setObject(data, forKey: "bugs")
+        NSUserDefaults.standardUserDefaults().synchronize()
+    }
 }
 
 // MARK: - NSTableViewDataSource
